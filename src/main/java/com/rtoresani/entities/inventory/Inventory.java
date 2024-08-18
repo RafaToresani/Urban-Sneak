@@ -18,7 +18,7 @@ public class Inventory {
     private Long id;
     private String size;
     private String color;
-    private String quantity;
+    private Integer quantity;
     @ManyToOne
     @JoinColumn(name="product_id")
     @JsonBackReference

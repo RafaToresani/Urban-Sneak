@@ -1,0 +1,38 @@
+package com.rtoresani.controllers;
+
+import com.rtoresani.dtos.requests.InventoryRequest;
+import com.rtoresani.services.InventoryService;
+import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/inventory")
+public class InventoryController {
+    @Autowired
+    private InventoryService inventoryService;
+
+    //      P U T
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStock(@RequestBody @Valid InventoryRequest request, BindingResult bindingResult) throws BadRequestException {
+        if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
+        this.inventoryService.updateStock(request);
+    }
+
+    //     G E T
+    @GetMapping("/is-in-stock")
+    @ResponseStatus(HttpStatus.OK)
+    public Boolean isInStock(@RequestParam("sku-code") String skuCode, @RequestParam String color, @RequestParam String size){
+        return this.inventoryService.isInStock(skuCode, color, size);
+    }
+
+    @GetMapping("/quantity")
+    @ResponseStatus(HttpStatus.OK)
+    public Integer getQuantity(@RequestParam("sku-code") String skuCode, @RequestParam String color, @RequestParam String size){
+        return this.inventoryService.getQuantity(skuCode, color, size);
+    }
+}

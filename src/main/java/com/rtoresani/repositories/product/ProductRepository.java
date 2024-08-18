@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     boolean existsBySkuCode(String skuCode);
     Optional<Product> findBySkuCode(String skuCode);
-    @Query("SELECT COUNT(p) > 0 FROM Product p JOIN p.colors c JOIN p.sizes s " +
+    @Query("SELECT p FROM Product p JOIN p.colors c JOIN p.sizes s " +
             "WHERE p.skuCode = :skuCode AND c.color = :color AND s.size = :size")
-    boolean existsBySkuCodeAndColorAndSize(
+    Optional<Product> findProductBySkuCodeAndColorAndSize(
             @Param("skuCode") String skuCode,
             @Param("color") String color,
             @Param("size") String size);
