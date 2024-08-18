@@ -13,4 +13,6 @@ public interface ProductService {
     ProductResponse findProductBySkuCode(String skuCode);
 
     ProductResponse updateProduct(ProductRequest productRequest);
+
+    void toggleStatus(String skuCode);
 }

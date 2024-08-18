@@ -82,6 +82,14 @@ public class ProductServiceImpl implements ProductService {
         return this.productToResponse(this.productRepository.save(existingProduct));
     }
 
+    @Override
+    public void toggleStatus(String skuCode) {
+        Optional<Product> product = this.productRepository.findBySkuCode(skuCode);
+        if(product.isEmpty()) throw new ResourceNotFoundException("Error: Product with SKU CODE: '" + skuCode + "' doesn't exist.");
+        product.get().toggleStatus();
+        this.productRepository.save(product.get());
+    }
+
 
     private void checkCategory(String category){
         try {

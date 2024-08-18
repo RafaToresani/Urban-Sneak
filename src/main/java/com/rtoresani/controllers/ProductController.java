@@ -60,5 +60,10 @@ public class ProductController {
         return this.productService.updateProduct(productRequest);
     }
 
-
+    //      D E L E T E
+    @DeleteMapping("/{sku-code}")
+    @ResponseStatus(HttpStatus.OK)
+    public void toggleProduct(@PathVariable(name = "sku-code") String skuCode){
+        this.productService.toggleStatus(skuCode);
+    }
 }
