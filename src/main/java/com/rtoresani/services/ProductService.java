@@ -11,4 +11,6 @@ public interface ProductService {
     Page<ProductResponse> findAll(String name, String brand, String category, Double minPrice, Double maxPrice, Pageable pageable);
 
     ProductResponse findProductBySkuCode(String skuCode);
+
+    ProductResponse updateProduct(ProductRequest productRequest);
 }

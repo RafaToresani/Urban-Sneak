@@ -50,4 +50,15 @@ public class ProductController {
     public ProductResponse findProduct(@PathVariable(name = "sku-code") String skuCode){
         return this.productService.findProductBySkuCode(skuCode);
     }
+
+    //      P U T
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponse updateProduct(@RequestBody @Valid ProductRequest productRequest, BindingResult bindingResult) throws BadRequestException {
+        if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
+
+        return this.productService.updateProduct(productRequest);
+    }
+
+
 }

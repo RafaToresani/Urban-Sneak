@@ -13,6 +13,7 @@ import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.repositories.product.ProductSizeRepository;
 import com.rtoresani.services.ProductService;
 import com.rtoresani.specifications.ProductSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +65,23 @@ public class ProductServiceImpl implements ProductService {
         return this.productToResponse(opt.get());
     }
 
+    @Transactional
+    public ProductResponse updateProduct(ProductRequest request) {
+        Optional<Product> opt = this.productRepository.findBySkuCode(request.skuCode());
+        if(opt.isEmpty()) throw new ResourceNotFoundException("Error: Product with SKU CODE: '" + request.skuCode() + "' doesn't exist.");
+
+        this.checkCategory(request.category());
+        Product existingProduct = opt.get();
+        existingProduct.setName(request.name());
+        existingProduct.setDescription(request.description());
+        existingProduct.setCategory(ECategory.valueOf(request.category()));
+        existingProduct.setBrand(request.brand());
+        existingProduct.setPrice(request.price());
+        existingProduct.setMaterial(request.material());
+
+        return this.productToResponse(this.productRepository.save(existingProduct));
+    }
+
 
     private void checkCategory(String category){
         try {
@@ -84,6 +102,7 @@ public class ProductServiceImpl implements ProductService {
                 .price(request.price())
                 .colors(new HashSet<>())
                 .sizes(new HashSet<>())
+                .inventories(new HashSet<>())
                 .material(request.material())
                 .isActive(true)
                 .build();

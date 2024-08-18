@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductColorRepository extends JpaRepository<ProductColor, Long> {
+    void deleteByProductId(Long productId);
 }
