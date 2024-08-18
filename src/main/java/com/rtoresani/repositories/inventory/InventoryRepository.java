@@ -10,7 +10,5 @@ import java.util.Optional;
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByProductSkuCodeAndColorAndSize(String skuCode, String color, String size);
 
-    Boolean existsBySkuCodeAndColorAndSize(String skuCode, String color, String size);
-
-
+    Boolean existsByProductSkuCodeAndColorAndSize(String skuCode, String color, String size);
 }

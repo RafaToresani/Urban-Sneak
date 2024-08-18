@@ -7,7 +7,6 @@ import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.inventory.InventoryRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.services.InventoryService;
-import com.rtoresani.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,14 +39,13 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Boolean isInStock(String skuCode, String color, String size) {
-        return this.inventoryRepository.existsBySkuCodeAndColorAndSize(skuCode, color, size);
+        return this.inventoryRepository.existsByProductSkuCodeAndColorAndSize(skuCode, color, size);
     }
 
     @Override
     public Integer getQuantity(String skuCode, String color, String size) {
         Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
         if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
-
         return optionalInventory.get().getQuantity();
     }
 }
