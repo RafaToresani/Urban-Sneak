@@ -6,6 +6,10 @@ import com.rtoresani.services.ProductService;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,5 +27,21 @@ public class ProductController {
         if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
 
         return this.productService.createProduct(productRequest);
+    }
+
+    //      G E T
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ProductResponse> findAllProducts(@RequestParam(required = false) String name,
+                                                 @RequestParam(required = false) String brand,
+                                                 @RequestParam(required = false) String category,
+                                                 @RequestParam(required = false, name = "min") Double min_price,
+                                                 @RequestParam(required = false, name = "max") Double max_price,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size,
+                                                 @RequestParam(defaultValue = "DESC") String sort,
+                                                 @RequestParam(defaultValue = "name", name = "sort-value") String sortValue){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sort), sortValue));
+        return this.productService.findAll(name, brand, category, min_price, max_price, pageable);
     }
 }

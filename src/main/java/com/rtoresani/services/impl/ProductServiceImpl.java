@@ -11,7 +11,11 @@ import com.rtoresani.repositories.product.ProductColorRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.repositories.product.ProductSizeRepository;
 import com.rtoresani.services.ProductService;
+import com.rtoresani.specifications.ProductSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -39,6 +43,17 @@ public class ProductServiceImpl implements ProductService {
         return this.productToResponse(this.productRepository.save(product));
     }
 
+    @Override
+    public Page<ProductResponse> findAll(String name, String brand, String category, Double minPrice, Double maxPrice, Pageable pageable) {
+        Specification<Product> spec = Specification.where(ProductSpecification.hasName(name))
+                .and(ProductSpecification.hasBrand(brand))
+                .and(ProductSpecification.hasCategory(category))
+                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
+
+        return products.map(this::productToResponse);
+    }
 
 
     private void checkCategory(String category){
