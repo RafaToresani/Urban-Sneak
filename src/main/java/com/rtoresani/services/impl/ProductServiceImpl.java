@@ -7,6 +7,7 @@ import com.rtoresani.entities.product.Product;
 import com.rtoresani.entities.product.ProductColor;
 import com.rtoresani.entities.product.ProductSize;
 import com.rtoresani.exceptions.ResourceAlreadyExistsException;
+import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.product.ProductColorRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.repositories.product.ProductSizeRepository;
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,13 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> products = productRepository.findAll(spec, pageable);
 
         return products.map(this::productToResponse);
+    }
+
+    @Override
+    public ProductResponse findProductBySkuCode(String skuCode) {
+        Optional<Product> opt = this.productRepository.findBySkuCode(skuCode);
+        if(opt.isEmpty()) throw new ResourceNotFoundException("Error: Product with SKU CODE: '" + skuCode + "' doesn't exist.");
+        return this.productToResponse(opt.get());
     }
 
 

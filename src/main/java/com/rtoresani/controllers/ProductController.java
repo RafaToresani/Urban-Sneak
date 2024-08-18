@@ -44,4 +44,10 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sort), sortValue));
         return this.productService.findAll(name, brand, category, min_price, max_price, pageable);
     }
+
+    @GetMapping("/{sku-code}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponse findProduct(@PathVariable(name = "sku-code") String skuCode){
+        return this.productService.findProductBySkuCode(skuCode);
+    }
 }
