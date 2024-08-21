@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ public class InventoryController {
     //      P U T
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public void updateStock(@RequestBody @Valid InventoryRequest request, BindingResult bindingResult) throws BadRequestException {
         if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
         this.inventoryService.updateStock(request);
@@ -25,6 +27,7 @@ public class InventoryController {
 
     //     G E T
     @GetMapping("/is-in-stock")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @ResponseStatus(HttpStatus.OK)
     public Boolean isInStock(@RequestParam("sku-code") String skuCode, @RequestParam String color, @RequestParam String size){
         return this.inventoryService.isInStock(skuCode, color, size);
