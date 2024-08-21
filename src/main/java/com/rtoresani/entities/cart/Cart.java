@@ -5,6 +5,7 @@ import com.rtoresani.entities.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -24,4 +25,5 @@ public class Cart {
     private User user;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart")
     private Set<CartItem> items;
+    private LocalDateTime lastUpdate;
 }

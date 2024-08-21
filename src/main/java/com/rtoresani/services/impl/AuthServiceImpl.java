@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .role(ERole.CUSTOMER)
-                .cart(Cart.builder().items(new HashSet<>()).build())
+                .cart(Cart.builder().items(new HashSet<>()).lastUpdate(LocalDateTime.now()).build())
                 .build();
 
         UserInfo userInfo = UserInfo.builder()
