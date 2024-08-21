@@ -24,7 +24,7 @@ public class ProductController {
     //      P O S T
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     public ProductResponse createProduct(@RequestBody @Valid ProductRequest productRequest, BindingResult bindingResult) throws BadRequestException {
         if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
 
@@ -56,7 +56,7 @@ public class ProductController {
     //      P U T
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     public ProductResponse updateProduct(@RequestBody @Valid ProductRequest productRequest, BindingResult bindingResult) throws BadRequestException {
         if(bindingResult.hasErrors()) throw new BadRequestException(bindingResult.getFieldError().getDefaultMessage());
 
@@ -66,7 +66,7 @@ public class ProductController {
     //      D E L E T E
     @DeleteMapping("/{sku-code}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
     public void toggleProduct(@PathVariable(name = "sku-code") String skuCode){
         this.productService.toggleStatus(skuCode);
     }
