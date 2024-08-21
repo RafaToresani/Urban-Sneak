@@ -8,28 +8,52 @@ Los usuarios de tipo Admin y Manager pueden dar de alta un nuevo producto, actua
 
 *Roles: Admin, Manager, Customer.*
 
-- RF01: El sistema debe permitir a cualquier usuario registrarse como Customer.
-- RF02: El sistema debe permitir iniciar sesión como Customer.
-- RF03: El sistema debe permitir al Admin otorgar el rol de Manager a un Customer.
-- RF04: El sistema debe permitir iniciar sesión como Manager.
-- RF05: El sistema debe permitir iniciar sesión como Admin.
-- RF06: El sistema debe permitir a todos los usuarios visualizar el listado de productos.
-- RF07: El sistema debe permitir a todos los usuarios visualizar un producto a detalle.
-- RF08: El sistema debe permitir a todos los usuarios visualizar el stock disponible de un producto, en función de su color y talle.
-- RF09: El sistema debe permitir al Admin y a los Managers realizar ABM de productos.
-- RF10: El sistema debe permitir al Admin y a los Managers actualizar el stock de un producto en función de su color y talle.
-- RF11: El sistema debe permitir crear un carrito para cada usuario.
-- RF12: El sistema debe permitir agregar un producto al carrito. Al agregarse, se debe validar que la cantidad esté disponible en el inventario.
-- RF13: El sistema debe permitir limpiar automáticamente el carrito después de 72 horas de haber sido actualizado.
-- RF14: El sistema debe permitir modificar la cantidad de un producto que ya esté en el carrito. Al modificarse, se debe validar que la cantidad esté disponible en el inventario.
-- RF15: El sistema debe permitir eliminar un producto del inventario.
-- RF16: El sistema debe permitir limpiar el carrito por completo.
-- RF17: El sistema debe permitir generar una orden de compra con el estado "Pendiente". Se debe validar que los productos y sus cantidades estén disponibles en el inventario.
-- RF18: El sistema debe permitir a los Customers cancelar una orden de compra si no fue procesada por un Admin. Dicha orden pasará al estado CANCELLED.
-- RF19: El sistema debe permitir a los Customers visualizar su historial de órdenes de compra.
-- RF20: El sistema debe permitir al Admin y a los Managers aprobar o rechazar una orden de compra.
-- RF21: El sistema debe permitir al Admin y a los Managers modificar el estado de una orden de compra.
-- RF22: El sistema debe permitir notificar a los Customers cuando el estado de su orden ha sido modificado.
+- RF01: El sistema debe permitir a cualquier usuario registrarse con el rol de **Customer**.
+
+- RF02: El sistema debe permitir a los usuarios con el rol de **Customer** iniciar sesión.
+
+- RF03: El sistema debe permitir al usuario con el rol de **Admin** otorgar el rol de **Manager** a un **Customer**.
+
+- RF04: El sistema debe permitir a los usuarios con el rol de **Manager** iniciar sesión.
+
+- RF05: El sistema debe permitir a los usuarios con el rol de **Admin** iniciar sesión.
+
+- RF06: El sistema debe permitir a todos los usuarios visualizar el listado de productos disponibles.
+
+- RF07: El sistema debe permitir a todos los usuarios visualizar los detalles de un producto específico.
+
+- RF08: El sistema debe permitir a todos los usuarios verificar el stock disponible de un producto en función de su color y talle.
+
+- RF09: El sistema debe permitir al **Admin** y a los **Managers** realizar operaciones de **Agregar**, **Borrar**, y **Modificar** (ABM) productos.
+
+- RF10: El sistema debe permitir al **Admin** y a los **Managers** actualizar el stock de un producto en función de su color y talle.
+
+- RF11: El sistema debe permitir la creación de un carrito de compras para cada usuario.
+
+- RF12: El sistema debe permitir agregar un producto al carrito de compras, validando que la cantidad solicitada esté disponible en el inventario.
+
+- RF13: El sistema debe reservar y modificar el stock disponible de un producto cuando este sea añadido a un carrito.
+
+- RF14: El sistema debe permitir limpiar automáticamente el carrito después de 72 horas desde su última actualización.
+
+- RF15: El sistema debe permitir modificar la cantidad de un producto en el carrito, validando que la cantidad solicitada esté disponible en el inventario.
+
+- RF16: El sistema debe permitir eliminar un producto del inventario.
+
+- RF17: El sistema debe permitir limpiar por completo el carrito de compras.
+
+- RF18: El sistema debe permitir generar una orden de compra con el estado **Pendiente**, validando que los productos y sus cantidades estén disponibles en el inventario.
+
+- RF19: El sistema debe permitir a los usuarios con el rol de **Customer** cancelar una orden de compra si no ha sido procesada por un **Admin**. La orden pasará al estado **Cancelado**.
+
+- RF20: El sistema debe permitir a los usuarios con el rol de **Customer** visualizar su historial de órdenes de compra.
+
+- RF21: El sistema debe permitir al **Admin** y a los **Managers** aprobar o rechazar una orden de compra.
+
+- RF22: El sistema debe permitir al **Admin** y a los **Managers** modificar el estado de una orden de compra.
+
+- RF23: El sistema debe notificar a los **Customers** cuando el estado de su orden de compra sea modificado.
+
 
 
 ## Diagrama UML
