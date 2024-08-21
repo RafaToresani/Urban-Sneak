@@ -4,6 +4,7 @@ import com.rtoresani.config.security.dtos.AuthResponse;
 import com.rtoresani.config.security.dtos.LoginRequest;
 import com.rtoresani.config.security.dtos.RegisterRequest;
 import com.rtoresani.config.security.jwt.JwtService;
+import com.rtoresani.entities.cart.Cart;
 import com.rtoresani.entities.user.Address;
 import com.rtoresani.entities.user.ERole;
 import com.rtoresani.entities.user.User;
@@ -55,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .role(ERole.CUSTOMER)
+                .cart(Cart.builder().items(new HashSet<>()).build())
                 .build();
 
         UserInfo userInfo = UserInfo.builder()
