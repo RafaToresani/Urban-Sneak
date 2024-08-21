@@ -4,6 +4,7 @@ import com.rtoresani.config.security.dtos.AuthResponse;
 import com.rtoresani.config.security.dtos.LoginRequest;
 import com.rtoresani.config.security.dtos.RegisterRequest;
 import com.rtoresani.config.security.jwt.JwtService;
+import com.rtoresani.entities.cart.Cart;
 import com.rtoresani.entities.user.Address;
 import com.rtoresani.entities.user.ERole;
 import com.rtoresani.entities.user.User;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -41,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> user = userRepository.findByEmail(request.email());
         if(user.isEmpty()) throw new ResourceNotFoundException("Email doesn't exists");
 
-        String token = jwtService.getToken(user.get());
+        String token = jwtService.getToken(user.get(), user.get().getAuthorities());
 
         return new AuthResponse(user.get().getUserInfo().getFirstName(), user.get().getUserInfo().getLastName(), token, user.get().getRole().name());
     }
@@ -54,7 +56,8 @@ public class AuthServiceImpl implements AuthService {
         User user = User.builder()
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .role(ERole.USER)
+                .role(ERole.CUSTOMER)
+                .cart(Cart.builder().items(new HashSet<>()).lastUpdate(LocalDateTime.now()).build())
                 .build();
 
         UserInfo userInfo = UserInfo.builder()
@@ -71,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(
                 user.getUserInfo().getFirstName(),
                 user.getUserInfo().getLastName(),
-                jwtService.getToken(user)
+                jwtService.getToken(user, user.getAuthorities())
                 , user.getRole().name());
     }
 }

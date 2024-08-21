@@ -1,5 +1,6 @@
 package com.rtoresani.entities.user;
 
+import com.rtoresani.entities.cart.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,8 @@ public class User implements UserDetails {
     private String password;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserInfo userInfo;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

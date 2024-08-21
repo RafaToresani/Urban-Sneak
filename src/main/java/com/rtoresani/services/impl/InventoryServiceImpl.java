@@ -7,6 +7,7 @@ import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.inventory.InventoryRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.services.InventoryService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,5 +48,15 @@ public class InventoryServiceImpl implements InventoryService {
         Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
         if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
         return optionalInventory.get().getQuantity();
+    }
+
+    @Override
+    public void checkAndReserveProduct(String skuCode, String size, String color, Integer quantity) throws BadRequestException {
+        Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
+        if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
+        if(optionalInventory.get().getQuantity()<quantity) throw new BadRequestException("The product doesn't have enough stock");
+        Inventory inventory = optionalInventory.get();
+        inventory.setQuantity(inventory.getQuantity()-quantity);
+        this.inventoryRepository.save(inventory);
     }
 }
