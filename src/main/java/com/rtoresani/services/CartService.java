@@ -12,4 +12,6 @@ public interface CartService {
     void cleanCart(String email);
 
     void deleteItemFromCart(Long itemId, String email);
+
+    void updateQuantity(Long itemId, Integer quantity);
 }

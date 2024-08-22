@@ -35,6 +35,14 @@ public class CartController {
         return this.cartService.addToCart(itemRequest, email);
     }
 
+    //      P A T C H
+    @PatchMapping("/update-quantity")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER', 'MANAGER')")
+    public void updateQuantity(@RequestParam(name = "item_id") Long itemId, @RequestParam(name = "quantity") Integer quantity){
+        this.cartService.updateQuantity(itemId, quantity);
+    }
+
     //      D E L E T E
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)

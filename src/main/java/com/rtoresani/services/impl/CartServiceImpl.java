@@ -66,7 +66,29 @@ public class CartServiceImpl implements CartService {
         this.cartRepository.save(cart);
     }
 
+    @Override
+    public void updateQuantity(Long itemId, Integer quantity) {
+        Optional<CartItem> optItem = this.itemRepository.findById(itemId);
+        if(optItem.isEmpty()) throw new ResourceNotFoundException("Item doesn't exists");
+        if(quantity<1) throw new IllegalArgumentException("Error: Quantity cannot be less than 1");
+        if(optItem.get().getQuantity()<quantity){
+            this.increaseQuantity(optItem.get(), quantity-optItem.get().getQuantity());
+        } else if (optItem.get().getQuantity()>quantity) {
+            this.decreaseQuantity(optItem.get(), optItem.get().getQuantity()-quantity);
+        }
+    }
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    private void decreaseQuantity(CartItem item, int quantity) {
+        this.inventoryService.increaseInventoryQuantity(item.getSkuCode(), item.getColor(), item.getSize(), quantity);
+        item.setQuantity(item.getQuantity()-quantity);
+        this.itemRepository.save(item);
+    }
+    private void increaseQuantity(CartItem item, int quantity) {
+        this.inventoryService.decreaseInventoryQuantity(item.getSkuCode(), item.getSize(), item.getColor(), quantity);
+        item.setQuantity(item.getQuantity()+quantity);
+        this.itemRepository.save(item);
+    }
     private CartItem requestToCartItem(Cart cart, CartItemRequest request) {
         return CartItem
                 .builder()
