@@ -1,6 +1,7 @@
 package com.rtoresani.exceptions;
 
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,5 +33,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleResourceNotFoundException(ResourceNotFoundException ex) {
         return ex.getMessage();
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleExpiredJwtException(ExpiredJwtException ex){
+        return "Session has expired.";
     }
 }

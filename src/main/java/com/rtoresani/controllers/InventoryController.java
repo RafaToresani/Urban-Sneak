@@ -1,6 +1,7 @@
 package com.rtoresani.controllers;
 
 import com.rtoresani.dtos.requests.InventoryRequest;
+import com.rtoresani.dtos.responses.InventoryResponse;
 import com.rtoresani.services.InventoryService;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -37,5 +40,12 @@ public class InventoryController {
     @ResponseStatus(HttpStatus.OK)
     public Integer getQuantity(@RequestParam("sku-code") String skuCode, @RequestParam String color, @RequestParam String size){
         return this.inventoryService.getQuantity(skuCode, color, size);
+    }
+
+    @GetMapping("/{sku-code}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+    public List<InventoryResponse> findAllInventoriesBySkuCode(@PathVariable(name = "sku-code") String skuCode){
+        return this.inventoryService.findAllInventories(skuCode);
     }
 }

@@ -1,7 +1,14 @@
 package com.rtoresani.services;
 
 import com.rtoresani.dtos.requests.InventoryRequest;
+import com.rtoresani.dtos.responses.InventoryResponse;
+import com.rtoresani.entities.product.Product;
+import com.rtoresani.entities.product.ProductColor;
+import com.rtoresani.entities.product.ProductSize;
 import org.apache.coyote.BadRequestException;
+
+import java.util.List;
+import java.util.Set;
 
 public interface InventoryService {
     void updateStock(InventoryRequest request);
@@ -14,5 +21,9 @@ public interface InventoryService {
 
     void increaseInventoryQuantity(String skuCode, String color, String size, Integer quantity);
 
-    void decreaseInventoryQuantity(String skuCode, String size, String color, int quantity);
+    void decreaseInventoryQuantity(String skuCode, String size, String color, Integer quantity);
+
+    void createInventories(Product product);
+
+    List<InventoryResponse> findAllInventories(String skuCode);
 }

@@ -11,6 +11,7 @@ import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.product.ProductColorRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.repositories.product.ProductSizeRepository;
+import com.rtoresani.services.InventoryService;
 import com.rtoresani.services.ProductService;
 import com.rtoresani.specifications.ProductSpecification;
 import jakarta.transaction.Transactional;
@@ -33,17 +34,20 @@ public class ProductServiceImpl implements ProductService {
     private ProductSizeRepository productSizeRepository;
     @Autowired
     private ProductColorRepository productColorRepository;
+    @Autowired
+    private InventoryService inventoryService;
 
     @Override
     public ProductResponse createProduct(ProductRequest request) {
         if(this.productRepository.existsBySkuCode(request.skuCode())) throw new ResourceAlreadyExistsException("ERROR: Product with SKUCODE: '" + request.skuCode() + "' already exists");
         this.checkCategory(request.category());
         Product product = this.requestToProduct(request);
-
         this.addColors(product, request.colors());
         this.addSizes(product, request.sizes());
+        this.productRepository.save(product);
+        this.inventoryService.createInventories(product);
 
-        return this.productToResponse(this.productRepository.save(product));
+        return this.productToResponse(product);
     }
 
     @Override
