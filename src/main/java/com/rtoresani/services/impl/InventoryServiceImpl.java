@@ -1,6 +1,7 @@
 package com.rtoresani.services.impl;
 
 import com.rtoresani.dtos.requests.InventoryRequest;
+import com.rtoresani.dtos.responses.InventoryResponse;
 import com.rtoresani.entities.inventory.Inventory;
 import com.rtoresani.entities.product.Product;
 import com.rtoresani.entities.product.ProductColor;
@@ -10,10 +11,12 @@ import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.inventory.InventoryRepository;
 import com.rtoresani.repositories.product.ProductRepository;
 import com.rtoresani.services.InventoryService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,7 +54,17 @@ public class InventoryServiceImpl implements InventoryService {
         });
     }
 
-    private void createInventory(Product product, String skuCode, String size, String color) {
+    @Override
+    public List<InventoryResponse> findAllInventories(String skuCode) {
+        List<Inventory> inventories = this.inventoryRepository.findAllByProductSkuCode(skuCode);
+        return inventories.stream().map(this::inventoryToResponse).toList();
+    }
+
+    private InventoryResponse inventoryToResponse(Inventory inventory) {
+        return new InventoryResponse(inventory.getColor(), inventory.getSize(), inventory.getQuantity());
+    }
+
+    public void createInventory(Product product, String skuCode, String size, String color) {
         Optional<Inventory> inventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
         if(inventory.isPresent())
             throw new ResourceAlreadyExistsException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' already exists.");
