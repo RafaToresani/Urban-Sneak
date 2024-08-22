@@ -3,6 +3,9 @@ package com.rtoresani.services.impl;
 import com.rtoresani.dtos.requests.InventoryRequest;
 import com.rtoresani.entities.inventory.Inventory;
 import com.rtoresani.entities.product.Product;
+import com.rtoresani.entities.product.ProductColor;
+import com.rtoresani.entities.product.ProductSize;
+import com.rtoresani.exceptions.ResourceAlreadyExistsException;
 import com.rtoresani.exceptions.ResourceNotFoundException;
 import com.rtoresani.repositories.inventory.InventoryRepository;
 import com.rtoresani.repositories.product.ProductRepository;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -37,6 +41,33 @@ public class InventoryServiceImpl implements InventoryService {
         this.inventoryRepository.save(updatedInventory);
 
     }
+
+    @Override
+    public void createInventories(Product product) {
+        product.getColors().forEach(color -> {
+            product.getSizes().forEach(size -> {
+                this.createInventory(product, product.getSkuCode(), size.getSize(), color.getColor());
+            });
+        });
+    }
+
+    private void createInventory(Product product, String skuCode, String size, String color) {
+        Optional<Inventory> inventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
+        if(inventory.isPresent())
+            throw new ResourceAlreadyExistsException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' already exists.");
+
+        Inventory newInv = Inventory
+                .builder()
+                .product(product)
+                .color(color)
+                .size(size)
+                .quantity(0)
+                .build();
+
+        this.inventoryRepository.save(newInv);
+    }
+
+
 
     @Override
     public Boolean isInStock(String skuCode, String color, String size) {
@@ -70,11 +101,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public void decreaseInventoryQuantity(String skuCode, String size, String color, int quantity) {
+    public void decreaseInventoryQuantity(String skuCode, String size, String color, Integer quantity) {
         Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
         if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
         Inventory inventory = optionalInventory.get();
         inventory.setQuantity(inventory.getQuantity()-quantity);
         this.inventoryRepository.save(inventory);
     }
+
+
 }
