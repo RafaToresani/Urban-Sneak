@@ -23,7 +23,7 @@ public class Cart {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart", orphanRemoval = true)
     private Set<CartItem> items;
     private LocalDateTime lastUpdate;
 }

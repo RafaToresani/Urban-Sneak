@@ -59,4 +59,22 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setQuantity(inventory.getQuantity()-quantity);
         this.inventoryRepository.save(inventory);
     }
+
+    @Override
+    public void increaseInventoryQuantity(String skuCode, String color, String size, Integer quantity) {
+        Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
+        if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
+        Inventory inventory = optionalInventory.get();
+        inventory.setQuantity(inventory.getQuantity()+quantity);
+        this.inventoryRepository.save(inventory);
+    }
+
+    @Override
+    public void decreaseInventoryQuantity(String skuCode, String size, String color, int quantity) {
+        Optional<Inventory> optionalInventory = this.inventoryRepository.findByProductSkuCodeAndColorAndSize(skuCode, color, size);
+        if(optionalInventory.isEmpty()) throw new ResourceNotFoundException("ERROR: Product with SKU CODE '" + skuCode + "', color '" + color + "', and size '" + size + "' doesn't exists.");
+        Inventory inventory = optionalInventory.get();
+        inventory.setQuantity(inventory.getQuantity()-quantity);
+        this.inventoryRepository.save(inventory);
+    }
 }

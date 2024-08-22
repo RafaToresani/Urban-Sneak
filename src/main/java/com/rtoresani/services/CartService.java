@@ -8,4 +8,10 @@ public interface CartService {
     CartResponse getCart(String email);
 
     CartResponse addToCart(CartItemRequest itemRequest, String email) throws BadRequestException;
+
+    void cleanCart(String email);
+
+    void deleteItemFromCart(Long itemId, String email);
+
+    void updateQuantity(Long itemId, Integer quantity);
 }
