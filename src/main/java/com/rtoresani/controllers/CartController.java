@@ -34,4 +34,20 @@ public class CartController {
         String email = SecurityUtils.getCurrentUserEmail();
         return this.cartService.addToCart(itemRequest, email);
     }
+
+    //      D E L E T E
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER', 'MANAGER')")
+    public void cleanCart(){
+        String email = SecurityUtils.getCurrentUserEmail();
+        this.cartService.cleanCart(email);
+    }
+
+    @DeleteMapping("/delete-item")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteItemFromCart(@RequestParam(name = "item_id") Long itemId){
+        String email = SecurityUtils.getCurrentUserEmail();
+        this.cartService.deleteItemFromCart(itemId, email);
+    }
 }

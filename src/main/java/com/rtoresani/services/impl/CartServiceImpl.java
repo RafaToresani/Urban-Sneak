@@ -12,11 +12,13 @@ import com.rtoresani.services.CartService;
 import com.rtoresani.services.InventoryService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,22 +33,40 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponse getCart(String email) {
-        Optional<Cart> cart = this.cartRepository.findByUserEmail(email);
-        if(cart.isEmpty()) throw new ResourceNotFoundException("User doesn't have a cart");
-        return cartToResponse(cart.get());
+        return cartToResponse(this.findCartByEmail(email));
     }
 
     @Override
     public CartResponse addToCart(CartItemRequest itemRequest, String email) throws BadRequestException {
-        Optional<Cart> cart = this.cartRepository.findByUserEmail(email);
-        if(cart.isEmpty()) throw new ResourceNotFoundException("User doesn't have a cart");
+        Cart cart = this.findCartByEmail(email);
         this.inventoryService.checkAndReserveProduct(itemRequest.skuCode(), itemRequest.size(), itemRequest.color(), itemRequest.quantity());
-        CartItem cartItem = this.requestToCartItem(cart.get(), itemRequest);
-        cart.get().getItems().add(cartItem);
-        cart.get().setLastUpdate(LocalDateTime.now());
-        return this.cartToResponse(this.cartRepository.save(cart.get()));
+        CartItem cartItem = this.requestToCartItem(cart, itemRequest);
+        cart.getItems().add(cartItem);
+        cart.setLastUpdate(LocalDateTime.now());
+        return this.cartToResponse(this.cartRepository.save(cart));
     }
 
+    @Transactional
+    public void cleanCart(String email) {
+        Cart cart = this.findCartByEmail(email);
+        Iterator<CartItem> iterator = cart.getItems().iterator();
+        while (iterator.hasNext()) {
+            CartItem item = iterator.next();
+            this.deleteItemFromCart(cart, item.getId());
+            iterator.remove();
+        }
+        this.cartRepository.save(cart);
+    }
+
+    @Override
+    public void deleteItemFromCart(Long itemId, String email) {
+        Cart cart = this.findCartByEmail(email);
+        this.deleteItemFromCart(cart, itemId);
+        cart.getItems().removeIf(item -> Objects.equals(item.getId(), itemId));
+        this.cartRepository.save(cart);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
     private CartItem requestToCartItem(Cart cart, CartItemRequest request) {
         return CartItem
                 .builder()
@@ -59,6 +79,15 @@ public class CartServiceImpl implements CartService {
                 .build();
     }
 
+    @Transactional
+    private void deleteItemFromCart(Cart cart, Long itemId){
+        Optional<CartItem> optItem = this.itemRepository.findById(itemId);
+        if(optItem.isEmpty()) throw new ResourceNotFoundException("Item doesn't exists");
+        CartItem item = optItem.get();
+        this.inventoryService.increaseInventoryQuantity(item.getSkuCode(), item.getColor(), item.getSize(), item.getQuantity());
+        this.itemRepository.delete(item);
+    }
+
     private CartResponse cartToResponse(Cart cart){
         Set<CartItemResponse> items = cart.getItems().stream().map(this::itemToResponse).collect(Collectors.toSet());
         return new CartResponse(items);
@@ -66,5 +95,23 @@ public class CartServiceImpl implements CartService {
 
     private CartItemResponse itemToResponse(CartItem item){
         return new CartItemResponse(item.getId(), item.getSkuCode(), item.getSize(), item.getColor(), item.getQuantity(), item.getPrice());
+    }
+
+    @Scheduled(cron="0 0 */24 * * *")
+    private void cleanInactiveCarts(){
+        LocalDateTime now = LocalDateTime.now();
+        List<Cart> carts = cartRepository.findAll();
+        carts.forEach(cart -> {
+            if (ChronoUnit.HOURS.between(cart.getLastUpdate(), now)>= 72){
+                this.cleanCart(cart.getUser().getEmail());
+            }
+        });
+    }
+
+
+    private Cart findCartByEmail(String email){
+        Optional<Cart> cart = this.cartRepository.findByUserEmail(email);
+        if(cart.isEmpty()) throw new ResourceNotFoundException("User doesn't have a cart");
+        return cart.get();
     }
 }

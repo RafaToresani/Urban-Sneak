@@ -11,4 +11,6 @@ public interface InventoryService {
     Integer getQuantity(String skuCode, String color, String size);
 
     void checkAndReserveProduct(String skuCode, String size, String color, Integer quantity) throws BadRequestException;
+
+    void increaseInventoryQuantity(String skuCode, String color, String size, Integer quantity);
 }
