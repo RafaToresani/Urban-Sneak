@@ -52,6 +52,8 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse singUp(RegisterRequest request) {
         Optional<User> opt = this.userRepository.findByEmail(request.email());
         if(opt.isPresent()) throw new ResourceAlreadyExistsException("User email already exists.");
+        if(this.userRepository.existsByUserInfoDni(request.dni()))
+            throw new ResourceAlreadyExistsException("Dni already exists.");
 
         User user = User.builder()
                 .email(request.email())
@@ -64,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .user(user)
+                .dni(request.dni())
                 .address(new HashSet<>())
                 .build();
 
