@@ -26,7 +26,7 @@ public class AdminInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if(userRepository.count()==0){
-            RegisterRequest request = new RegisterRequest(email, password, "El Jefe", "Gorgory");
+            RegisterRequest request = new RegisterRequest(email, password, "El Jefe", "Gorgory", null);
             this.authService.singUp(request);
             Optional<User> user = this.userRepository.findByEmail(email);
             if(user.isEmpty()) return;

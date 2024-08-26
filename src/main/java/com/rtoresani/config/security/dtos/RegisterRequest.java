@@ -19,6 +19,9 @@ public record RegisterRequest(
 
         @NotBlank(message = "Last name is mandatory")
         @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
-        String lastName
+        String lastName,
+        @NotBlank(message = "Dni is mandatory")
+        @Size(min = 8, max = 10, message = "Last name must be between 2 and 50 characters")
+        String dni
 ) {
 }
