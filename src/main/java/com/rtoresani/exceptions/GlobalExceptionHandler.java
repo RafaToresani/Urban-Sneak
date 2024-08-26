@@ -4,40 +4,45 @@ package com.rtoresani.exceptions;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleBadRequestException(BadRequestException ex){
-        return ex.getMessage();
+    public ResponseEntity<String> handleBadRequestException(BadRequestException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body("{\"error\": \"" + ex.getMessage() + "\"}");
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex){
-        return ex.getMessage();
+    public ResponseEntity<String> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .header("Content-Type", "application/json")
+                .body("{\"error\": \"" + ex.getMessage() + "\"}");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body("{\"error\": \"" + ex.getMessage() + "\"}");
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body("{\"error\": \"" + ex.getMessage() + "\"}");
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleExpiredJwtException(ExpiredJwtException ex){
-        return "Session has expired.";
+    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header("Content-Type", "application/json")
+                .body("{\"error\": \"Session has expired.\"}");
     }
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
-    @Value("${SECRET_KEY}")
+    @Value("${secret.key}")
     private String SECRET_KEY;
 
     public String getToken(UserDetails user,  Collection<? extends GrantedAuthority> authorities) {
